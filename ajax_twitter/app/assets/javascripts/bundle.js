@@ -86,14 +86,44 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./frontend/api_util.js":
+/*!******************************!*\
+  !*** ./frontend/api_util.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+const APIUtil = {
+  followUser: id => {
+    return $.ajax({
+      url: `/users/${id}/follow`,
+      method: 'post',
+      dataType: 'json'
+      });
+  },
+
+  unfollowUser: id => {
+    return $.ajax({
+      url: `/users/${id}/follow`,
+      method: 'delete',
+      dataType: 'json'
+    });
+  }
+};
+
+module.exports = APIUtil;
+ 
+
+/***/ }),
+
 /***/ "./frontend/follow_toggle.js":
 /*!***********************************!*\
   !*** ./frontend/follow_toggle.js ***!
   \***********************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-
+const util = __webpack_require__(/*! ./api_util */ "./frontend/api_util.js");
 class FollowToggle {
   
   constructor($el) {
@@ -101,22 +131,31 @@ class FollowToggle {
     this.followState = $el.data('initial-follow-state');
     this.$el = $el;
     this.render();
-    this.$el.on('click', 'button', handleClick);
+    this.$el.on('click', (e) => {
+      this.handleClick(e);
+    });
   }
 
   render() {
-    if (this.followState) this.$el.append('Follow!'); 
-    else this.$el.append('Unfollow!');
+    this.$el.empty();
+    if (this.followState) this.$el.append('Unfollow!'); 
+    else this.$el.append('Follow!');
   }
 
   handleClick(e) {
+    let userId = this.userId;
     e.preventDefault();
-    $.ajax( {
-      url: `/users/${this.userId}/follow`,
-      method: `${this.followState ? 'delete' : 'post'}`,
-      dataType: 'json',
-      success: () => {this.followState = !this.followState;}
-    });
+    if (this.followState){
+      util.unfollowUser(userId).then(this.changeFollowState.bind(this));
+    }else{
+      util.followUser(userId).then(this.changeFollowState.bind(this));
+    }
+  }
+
+  changeFollowState(){
+    this.followState = !this.followState;
+    this.render();
+
   }
   
 }
@@ -136,7 +175,7 @@ const FollowToggle = __webpack_require__(/*! ./follow_toggle */ "./frontend/foll
 
 $(() => {
   $('.follow-toggle').each((idx, ele) => {
-    new FollowToggle(ele);
+    new FollowToggle($(ele));
   });
   
 });
