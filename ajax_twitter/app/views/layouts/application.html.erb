@@ -9,7 +9,8 @@
   </head>
 
   <body>
-    <ul>
+  <nav class='header'>
+    <ul class="content-nav">
       <li><a href="<%= feed_url %>">Feed</a></li>
       <li><a href="<%= search_users_url %>">User Search</a></li>
     </ul>
@@ -25,7 +26,9 @@
         <input type="submit" value="Logout!">
       </form>
     <% end %>
-    
+  </nav>
+    <section class="main-content">
     <%= yield %>
+    </section>
   </body>
 </html>

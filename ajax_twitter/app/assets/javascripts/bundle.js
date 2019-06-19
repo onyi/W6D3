@@ -227,6 +227,7 @@ class UsersSearch {
     let success = (res) => {
       this.$ul.empty();
       console.log(`Result: ${JSON.stringify(res)}`);
+      this.$ul.append('<h3>Search Results</h3>');
       res.forEach((user) => {
         let $li = $('<li>');
         $li.append(`<a href="/users/${user.id}">${user.username}</a>`);
