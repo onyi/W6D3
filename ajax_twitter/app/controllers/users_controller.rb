@@ -38,8 +38,11 @@ class UsersController < ApplicationController
     else
       @users = User.none
     end
-
-    render :search
+    #TODO
+    respond_to do |format|
+      format.html { render :search }
+      format.json { render :search }
+    end
   end
 
   protected

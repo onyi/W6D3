@@ -13,6 +13,18 @@ const APIUtil = {
       method: 'delete',
       dataType: 'json'
     });
+  },
+
+  searchUsers: (queryVal, success) => {
+    const promise1 = $.ajax({
+      url: '/users/search',
+      method: 'get',
+      dataType: 'json',
+      data: {
+        query: queryVal 
+      }
+    });
+    promise1.then(success);
   }
 };
 

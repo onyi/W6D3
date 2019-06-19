@@ -1,9 +1,10 @@
 const util = require('./api_util');
+
 class FollowToggle {
   
-  constructor($el) {
-    this.userId = $el.data('user-id');
-    this.followState = $el.data('initial-follow-state');
+  constructor($el, options) {
+    this.userId = $el.data('user-id') || options.id;
+    this.followState = $el.data('initial-follow-state') || options.followed;
     this.$el = $el;
     this.render();
     this.$el.on('click', (e) => {
@@ -15,9 +16,11 @@ class FollowToggle {
     this.$el.empty();
     if (this.followState) this.$el.append('Unfollow!'); 
     else this.$el.append('Follow!');
+    this.$el.removeProp("disabled");
   }
 
   handleClick(e) {
+    this.$el.prop("disabled", "true");
     let userId = this.userId;
     e.preventDefault();
     if (this.followState){
@@ -30,7 +33,6 @@ class FollowToggle {
   changeFollowState(){
     this.followState = !this.followState;
     this.render();
-
   }
   
 }

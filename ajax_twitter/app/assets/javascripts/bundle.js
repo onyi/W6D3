@@ -108,6 +108,18 @@ const APIUtil = {
       method: 'delete',
       dataType: 'json'
     });
+  },
+
+  searchUsers: (queryVal, success) => {
+    const promise1 = $.ajax({
+      url: '/users/search',
+      method: 'get',
+      dataType: 'json',
+      data: {
+        query: queryVal 
+      }
+    });
+    promise1.then(success);
   }
 };
 
@@ -124,11 +136,12 @@ module.exports = APIUtil;
 /***/ (function(module, exports, __webpack_require__) {
 
 const util = __webpack_require__(/*! ./api_util */ "./frontend/api_util.js");
+
 class FollowToggle {
   
-  constructor($el) {
-    this.userId = $el.data('user-id');
-    this.followState = $el.data('initial-follow-state');
+  constructor($el, options) {
+    this.userId = $el.data('user-id') || options.id;
+    this.followState = $el.data('initial-follow-state') || options.followed;
     this.$el = $el;
     this.render();
     this.$el.on('click', (e) => {
@@ -140,9 +153,11 @@ class FollowToggle {
     this.$el.empty();
     if (this.followState) this.$el.append('Unfollow!'); 
     else this.$el.append('Follow!');
+    this.$el.removeProp("disabled");
   }
 
   handleClick(e) {
+    this.$el.prop("disabled", "true");
     let userId = this.userId;
     e.preventDefault();
     if (this.followState){
@@ -155,7 +170,6 @@ class FollowToggle {
   changeFollowState(){
     this.followState = !this.followState;
     this.render();
-
   }
   
 }
@@ -172,15 +186,68 @@ module.exports = FollowToggle;
 /***/ (function(module, exports, __webpack_require__) {
 
 const FollowToggle = __webpack_require__(/*! ./follow_toggle */ "./frontend/follow_toggle.js");
+const UsersSearch = __webpack_require__(/*! ./users_search */ "./frontend/users_search.js");
 
 $(() => {
   $('.follow-toggle').each((idx, ele) => {
     new FollowToggle($(ele));
   });
+
+  $(".users-search").each((idx, ele) => {
+    new UsersSearch($(ele));
+  });
   
 });
 
 
+
+/***/ }),
+
+/***/ "./frontend/users_search.js":
+/*!**********************************!*\
+  !*** ./frontend/users_search.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const util = __webpack_require__(/*! ./api_util */ "./frontend/api_util.js");
+const FollowToggle = __webpack_require__(/*! ./follow_toggle */ "./frontend/follow_toggle.js");
+
+class UsersSearch {
+
+  constructor($el) {
+    this.$el = $el;
+    this.username = $el.find('#user-name');
+    this.$ul = $el.find('.users');
+    this.username.change(this.handleInput.bind(this));
+  }
+
+  handleInput(e) {
+    console.log(`Username: ${this.username.val()}`);
+    let success = (res) => {
+      this.$ul.empty();
+      console.log(`Result: ${JSON.stringify(res)}`);
+      res.forEach((user) => {
+        let $li = $('<li>');
+        $li.append(`<a href="/users/${user.id}">${user.username}</a>`);
+        let $button = $(`<button class="follow-toggle"
+                    data-user-id="${user.id}"
+                    data-initial-follow-state="${user.followed}">
+                    </button>`);
+        new FollowToggle($button, user);            
+        $li.append($button);
+        this.$ul.append($li);
+      });
+    };
+    util.searchUsers(this.username.val(), success);
+  }
+
+
+
+
+}
+
+module.exports = UsersSearch;
 
 /***/ })
 
