@@ -1,9 +1,13 @@
+body {
+  background-color: green;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   /* margin: 25px; */
   padding: 25px;
-  background: lightgray;
+  background: lightskyblue;
   border-bottom: 1px solid gray
 }
 .content-nav {
@@ -46,4 +50,44 @@ button:active {
 button:hover {
   background: rgb(134, 169, 235);
   cursor: pointer;
+}
+
+.tweet-compose > label {
+  padding: 10px;
+}
+
+.tweet-compose {
+  padding: 25px 0px;
+}
+
+.new-tweet {
+  padding: 10px;
+  /* background: green; */
+}
+
+.welcome-user {
+  width: 100%;
+  margin: 0 auto;
+  background: lightskyblue;
+  text-align: center;
+  font-size: 46px;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+#feed {
+  height: 500px;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.tweet-content {
+  padding: 40px 10px;
+  border: 1px solid gray;
+  text-align: center;
+  width: 300px;
+  margin: 20px auto;
+  border-radius: 5px;
 }
